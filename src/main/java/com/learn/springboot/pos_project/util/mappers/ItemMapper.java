@@ -4,6 +4,7 @@ import com.learn.springboot.pos_project.dto.request.ItemSaveRequestDTO;
 import com.learn.springboot.pos_project.dto.response.ItemGetResponseDTO;
 import com.learn.springboot.pos_project.entity.Item;
 import org.mapstruct.Mapper;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -14,5 +15,7 @@ public interface ItemMapper {
 
     //ItemSaveRequestDTO --->  Item
     Item dtoToEntity(ItemSaveRequestDTO itemSaveRequestDTO);
+
+    List<ItemGetResponseDTO> entityPageToDtoList(Page<Item> itemList);
 
 }

@@ -1,8 +1,10 @@
 package com.learn.springboot.pos_project.service.implementation;
 
+import com.learn.springboot.pos_project.dto.paginated.PaginatedResponseItemDTO;
 import com.learn.springboot.pos_project.dto.request.ItemSaveRequestDTO;
 import com.learn.springboot.pos_project.dto.response.ItemGetResponseDTO;
 import com.learn.springboot.pos_project.entity.Item;
+import com.learn.springboot.pos_project.exception.NotFoundException;
 import com.learn.springboot.pos_project.repository.ItemRepo;
 import com.learn.springboot.pos_project.service.ItemService;
 import com.learn.springboot.pos_project.util.mappers.ItemMapper;
@@ -11,6 +13,8 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -94,4 +98,33 @@ public class ItemServiceIMPL implements ItemService {
            throw new EmptyResultDataAccessException(1);
        }
     }
+
+    @Override
+    public List<ItemGetResponseDTO> getItemByActiveStatus(boolean activeStatus) {
+        boolean status=true;
+        List<Item> itemList =itemRepo.findAllByActiveStatusEquals(activeStatus);
+        if(itemList.size()>0) {
+            List<ItemGetResponseDTO> itemGetResponseDTOList = itemMapper.entityListToResponseDTOList(itemList);
+            return itemGetResponseDTOList;
+        }else{
+            throw new NotFoundException("Item Not Found");
+        }
+    }
+
+    @Override
+    public PaginatedResponseItemDTO getItemByActiveStatusWithPagination(boolean activeStatus, int page, int size) {
+        boolean status=true;
+        Page<Item> itemList = itemRepo.findAllByActiveStatusEquals(activeStatus, PageRequest.of(page,size));
+        int countTotal = itemRepo.countAllByActiveStatusEquals(activeStatus);
+        if(itemList.getSize() <1){
+            throw new EmptyResultDataAccessException(1);
+        }
+        PaginatedResponseItemDTO paginatedResponseItemDTOList = new PaginatedResponseItemDTO(
+                itemMapper.entityPageToDtoList(itemList),
+                countTotal
+        );
+
+        return paginatedResponseItemDTOList;
+    }
+
 }

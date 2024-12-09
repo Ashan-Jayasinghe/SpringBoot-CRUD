@@ -127,4 +127,21 @@ public class ItemServiceIMPL implements ItemService {
         return paginatedResponseItemDTOList;
     }
 
+    @Override
+    public PaginatedResponseItemDTO getAllItemsPaginated(int page, int size) {
+        Page<Item> itemList = itemRepo.findAll(PageRequest.of(page,size));
+        long countTotal = itemRepo.count();
+        if(itemList.getSize() > 0 ){
+            PaginatedResponseItemDTO paginatedResponseItemDTO = new PaginatedResponseItemDTO(
+                    itemMapper.entityPageToDtoList(itemList),
+                    countTotal
+            );
+            return paginatedResponseItemDTO;
+        }else{
+            throw new EmptyResultDataAccessException(1);
+        }
+    }
+
+
+
 }

@@ -78,7 +78,22 @@ public class ItemController {
         PaginatedResponseItemDTO paginatedResponseItemDTO = itemService.getItemByActiveStatusWithPagination(activeStatus,page,size);
         return new ResponseEntity<StandardResponse>(
                 new StandardResponse(200,"Success",paginatedResponseItemDTO),
-                HttpStatus.CREATED
+                HttpStatus.OK
         );
     }
+
+ @GetMapping(
+         path = {"/get-all-paginated"},
+         params = {"page","size"}
+ )
+    public ResponseEntity<StandardResponse>getAllItemsPaginated(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size
+ ){
+     PaginatedResponseItemDTO paginatedResponseItemDTO = itemService.getAllItemsPaginated(page,size);
+     return new ResponseEntity<StandardResponse>(
+             new StandardResponse(200,"Success",paginatedResponseItemDTO),
+             HttpStatus.OK
+     );
+ }
 }
